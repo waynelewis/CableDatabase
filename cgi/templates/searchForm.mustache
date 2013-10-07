@@ -1,0 +1,32 @@
+{{> header}}
+<form id="search" name="myform" action="search.py" method=post> 
+	<div class="fullwidth">
+		<table>
+			<tr>
+				<td class="searchopt">		
+					<table class="smalltable">
+				        <tbody> 
+				        	{{#searchRows}}
+				            <tr>
+				                <td width="35%" class="smalltable">{{title}}</td>
+				                <td>
+				                	<select name="{{name}}" multiple="multiple" class="mselect">
+				                	{{#sourceOptions}}
+				                	<option>{{options}}</option>
+				                	{{/sourceOptions}}
+				                	</select>
+				                </td>
+				            </tr>
+				            {{/searchRows}}
+				        </tbody>
+				    </table>
+				</td>
+				<td class="menu">
+					<input type="submit" name="command" value="Display Cable Data"><p>
+					<input type="submit" name="command" value="Print Pull-sheet"><p>	
+				</td>
+			</tr>
+		</table>
+	</div>
+</form>
+{{> footer}}

@@ -1,0 +1,20 @@
+{{> header}}
+<table class="gridtable" align="center">
+	<thead>
+        <th>Cable Label</th>
+		<th>Cable Type</th>
+		<th>Cable Use</th>
+		<th>Connection</th>
+    </thead>
+    <tbody>
+    {{#sourceList}}
+        <tr>
+            <td>{{label}}</td>
+            <td><a href="getCableSpecs.py?id={{type}}">{{type}}</a> ({{longType}})</td>
+            <td>{{use}}</td>
+            <td>{{connection}}</td>
+        </tr>
+    {{/sourceList}}
+    </tbody>
+</table>
+{{> footer}}    

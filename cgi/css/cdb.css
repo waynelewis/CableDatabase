@@ -1,0 +1,104 @@
+body{
+	margin:0px;
+	padding:0px;
+	background:#ffffff;
+	font-family: verdana,arial,sans-serif;
+	font-size:11px;
+}
+
+.fullwidth {
+	width: 1100px;
+	text-align: center;
+	margin:0 auto;
+}
+
+div.title {
+	font-weight: bold;
+	height:90px;
+	width:770px;
+	font-size: 32px;
+	display: inline-block;
+	line-height: 80px;
+	text-align: center;
+	background-color: #ffffff;
+}
+
+div.logo {
+	height:90px;
+	width:250px;
+	display: inline-block;
+	background: url('../images/nsls2logo.png');
+	background-size: contain;
+	background-repeat: no-repeat;
+	line-height: 80px;
+	background-color: #ffffff;
+}
+
+div.submitline {
+	width: 1020px;
+}
+
+table.smalltable {
+	width: 650px;
+	font-size: 16px;
+	text-align: left;
+	border: none;
+}
+
+.searchopt {
+	width: 700px;
+	text-align:center;
+	display: inline-block;
+	border: 1px solid black;
+}
+
+.menu {
+	width: 300px;
+	text-align:center;
+	display:inline-block;
+	border: 1px solid black;
+	vertical-align: top;
+}
+
+table.gridtable {
+	font-size:11px;
+	color:#333333;
+	width: 1020px;
+	border-width: 2px;
+	border-color: #666666;
+	border-collapse: collapse;
+	border-spacing: 0px;
+}
+table.gridtable th {
+	border-width: 2px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #666666;
+	background-color: #dedede;
+}
+
+table.gridtable td {
+	font-family: courier;
+	border-width: 2px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #666666;
+	background-color: #ffffff;
+}
+
+.mselect {
+	width: 325px;
+	height: 60px;
+	display: inline;
+}
+
+.footer {
+	width: 1020px;
+	height: 100px;
+	font-size: 14px;
+	display: inline-block;
+	line-height: 100px;
+	text-align: left;
+	font-weight: bold;
+	background-color: #ffffff;
+}

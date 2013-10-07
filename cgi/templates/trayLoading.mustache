@@ -1,0 +1,22 @@
+{{>header}}
+	<table class="gridtable" align="center">
+    	<thead>
+            <th>Cable Tray Label</th>
+			<th>Divider 'A'</th>
+			<th>Divider 'B'</th>
+			<th>Divider 'C'</th>
+			<th>Divider 'D'</th>
+        </thead>
+        <tbody>
+        {{#loadingList}}
+            <tr>
+                <td>{{label}}</td>
+                <td width=15% style="background-color:{{Acolour}}">{{A}}</td>
+                <td width=15% style="background-color:{{Bcolour}}">{{B}}</td>
+                <td width=15% style="background-color:{{Ccolour}}">{{C}}</td>
+                <td width=15% style="background-color:{{Dcolour}}">{{D}}</td>
+            </tr>
+        {{/loadingList}}
+        </tbody>
+    </table>
+{{> footer}}

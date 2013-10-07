@@ -1,0 +1,22 @@
+{{> header}}
+	<table class="gridtable" align="center">
+    	<thead>
+            <th>Cable Number</th>
+			<th>Cable Type</th>
+			<th>Cable Source</th>
+			<th>Cable Path</th>
+			<th>Cable Destination</th>
+        </thead>
+        <tbody>
+        {{#sourceList}}
+            <tr>
+                <td>{{label}}</td>
+                <td>{{type}}</td>
+                <td>{{source}}</td>
+                <td>{{path}}</td>
+                <td>{{destination}}</td>
+            </tr>
+        {{/sourceList}}
+        </tbody>
+    </table>
+{{> footer}}

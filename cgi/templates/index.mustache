@@ -1,0 +1,33 @@
+{{> header}}
+	<div class="gridtable" align="center">
+	    <table>
+	    	<form action="getSourceList.py" method="get">
+	        <tr>
+	            <td>Cable Source Connection list</td>
+	            <td>
+		            <select name=source>
+		            	{{#sourceList}}
+							<option value="{{rack}}">{{rack}}</option>
+						{{/sourceList}}
+		            </select>
+	            </td>
+	            <td><input type=submit value="Go" />
+	        </tr>
+	        </form>
+	        <form action="searchForm.py" method="get">
+	        <tr>
+	        	<td>Search Cable Database</td>
+	            <td>&nbsp;</td>
+	            <td><input type=submit value="Go" /></td>
+			</tr>
+	        </form>
+	        <form action="getAllTrayLoading.py" method="get">
+	        <tr>
+	        	<td>Show Tray Loading For All Trays</td>
+	            <td>&nbsp;</td>
+	            <td><input type=submit value="Go" /></td>
+			</tr>
+	        </form>
+		</table>
+	</div>
+{{> footer}}    
