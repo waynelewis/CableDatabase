@@ -52,7 +52,7 @@ def getSourceConnectionList(source):
     """Get source connection list from database and return rows"""
     db=connectToDatabase()
     cur = db.cursor()
-    cur.execute("SELECT a.id,a.branch,a.sourceID,a.destinationID,a.cableType,b.cableLongName,a.cableUse,a.sourceConnection FROM CableDatabase a, CableTypes b WHERE a.sourceID = \"%s\" AND a.cableType = b.cableType" % source)
+    cur.execute("SELECT a.id,a.branch,a.sourceID,a.destinationID,a.cableType,b.cableLongName,a.cableUse,a.sourceConnection,a.destinatonConnection FROM CableDatabase a, CableTypes b WHERE a.sourceID = \"%s\" AND a.cableType = b.cableType" % source)
     rows = cur.fetchall()
     db.close()
     return rows
@@ -71,7 +71,7 @@ def doCableSearch(returned, keys):
 	"""Do search of cable database and return ids of results"""
 	db = connectToDatabase()
 	cur = db.cursor()
-	cmd = "SELECT a.id,a.branch,a.sourceID,a.destinationID,a.cableType,b.cableLongName,a.cableUse,{0} FROM cableDatabase a, cableTypes b WHERE a.cableType = b.cableType ".format(",".join(returned))
+	cmd = "SELECT a.id,a.branch,a.sourceID,a.destinationID,a.cableType,b.cableLongName,a.cableUse,{0} FROM CableDatabase a, CableTypes b WHERE a.cableType = b.cableType ".format(",".join(returned))
 	
 	s = []
 	for key,arg in keys.items():
@@ -124,7 +124,7 @@ def calculateTrayLoading(trayTag):
 	cur = db.cursor()
 	rexp = "'[[:<:]]{0}[A-Z][[:>:]]|[[:<:]]{0}[[:>:]]'".format(trayTag)
 		 	
-	cur.execute("SELECT a.id, b.cableDiameter, b.defaultDivider, a.cablePath, a.sourceID, a.destinationID from cableDatabase a, cableTypes b where a.cableType = b.cableType and (a.cablePath REGEXP {0} OR a.destinationID = {0});".format(trayTag))
+	cur.execute("SELECT a.id, b.cableDiameter, b.defaultDivider, a.cablePath, a.sourceID, a.destinationID from CableDatabase a, CableTypes b where a.cableType = b.cableType and (a.cablePath REGEXP {0} OR a.destinationID = {0});".format(trayTag))
 	rows = cur.fetchall()
 	
 	if rows is None:

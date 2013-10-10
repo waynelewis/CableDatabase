@@ -25,7 +25,8 @@ def main():
 				  type = row[4],
 				  longType = row[5],
 				  use = row[6],
-				  connection = row[7])
+				  sourceconn = row[7],
+				  destconn = row[8])
 			 for row in rows]
 
 	# Setup the renderer to make the html list

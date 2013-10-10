@@ -4,7 +4,8 @@
         <th>Cable Label</th>
 		<th>Cable Type</th>
 		<th>Cable Use</th>
-		<th>Connection</th>
+		<th>Source Conn.</th>
+		<th>Destination Conn.</th>
     </thead>
     <tbody>
     {{#sourceList}}
@@ -12,7 +13,8 @@
             <td>{{label}}</td>
             <td><a href="getCableSpecs.py?id={{type}}">{{type}}</a> ({{longType}})</td>
             <td>{{use}}</td>
-            <td>{{connection}}</td>
+            <td>{{sourceconn}}</td>
+            <td>{{destconn}}
         </tr>
     {{/sourceList}}
     </tbody>
