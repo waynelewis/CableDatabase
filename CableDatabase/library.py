@@ -52,7 +52,7 @@ def getSourceConnectionList(source):
     """Get source connection list from database and return rows"""
     db=connectToDatabase()
     cur = db.cursor()
-    cur.execute("SELECT a.id,a.branch,a.sourceID,a.destinationID,a.cableType,b.cableLongName,a.cableUse,a.sourceConnection,a.destinatonConnection FROM CableDatabase a, CableTypes b WHERE a.sourceID = \"%s\" AND a.cableType = b.cableType" % source)
+    cur.execute("SELECT a.id,a.branch,a.sourceID,a.destinationID,a.cableType,b.cableLongName,a.cableUse,a.sourceConnection,a.destinationConnection FROM CableDatabase a, CableTypes b WHERE a.sourceID = \"%s\" AND a.cableType = b.cableType" % source)
     rows = cur.fetchall()
     db.close()
     return rows
