@@ -18,7 +18,7 @@ def main():
 	searchRows = list()
 	for col,name in zip(cdblib.dbColumns, cdblib.columnNames):
 		searchRow = dict()
-		searchRow['sourceOptions'] = makeDict(cdblib.getAllAndSort('cableDatabase',col))
+		searchRow['sourceOptions'] = makeDict(cdblib.getAllAndSort('CableDatabase',col))
 		searchRow['name'] = col
 		searchRow['title'] = name
 		searchRows.append(searchRow)
