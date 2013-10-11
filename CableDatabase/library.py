@@ -67,6 +67,17 @@ def getAllData(keys):
 	rows = doCableSearch(['a.sourceID, a.destinationID, a.cablePath, a.cableDwgNo, a.cableInstalled'], keys)
 	return rows
 	
+def getData(ids):
+	"""Get all data based on list of ids"""
+	db = connectToDatabase()
+	cur = db.cursor()
+	cmd = "SELECT id,branch,sourceID,destinationID FROM CableDatabase WHERE id in ({0})".format(",".join(ids))
+	cur.execute(cmd)
+	rows = cur.fetchall()
+	cur.close()
+	db.close()
+	return rows
+	
 def doCableSearch(returned, keys):
 	"""Do search of cable database and return ids of results"""
 	db = connectToDatabase()
@@ -89,6 +100,8 @@ def doCableSearch(returned, keys):
 		
 	cur.execute(cmd)
 	rows = cur.fetchall()
+	cur.close()
+	db.close()
 	return rows
 
 

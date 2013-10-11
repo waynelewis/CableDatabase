@@ -1,28 +1,32 @@
 {{> header}}
-	<table class="gridtable" align="center">
-    	<thead>
-            <th>Cable Number</th>
-			<th>Cable Type</th>
-			<th>Cable Use</th>
-			<th>Cable Source</th>
-			<th>Cable Destination</th>
-			<th>Cable Path</th>
-			<th>Cable Drawing Ref.</th>
-			<th>Installed?</th>
-        </thead>
-        <tbody>
-        {{#sourceList}}
-            <tr>
-                <td>{{label}}</td>
-                <td>{{type}}</td>
-                <td>{{use}}</td>
-                <td>{{source}}</td>
-                <td>{{destination}}</td>
-                <td>{{path}}</td>
-                <td>{{drawing}}</td>
-                <td>{{installed}}</td>
-            </tr>
-        {{/sourceList}}
-        </tbody>
-    </table>
+	<form method="post" action="getData.py">
+		<table class="gridtable" align="center">
+	    	<thead>
+	            <th>Cable Number</th>
+				<th>Cable Type</th>
+				<th>Cable Use</th>
+				<th>Cable Source</th>
+				<th>Cable Destination</th>
+				<th>Cable Path</th>
+				<th>Cable Drawing Ref.</th>
+				<th>Installed?</th>
+	        </thead>
+	        <tbody>
+	        {{#sourceList}}
+	            <tr>
+	                <td>{{label}}</td>
+	                <td>{{type}}</td>
+	                <td>{{use}}</td>
+	                <td>{{source}}</td>
+	                <td>{{destination}}</td>
+	                <td>{{path}}</td>
+	                <td>{{drawing}}</td>
+	                <td>{{installed}}</td>
+	            </tr>
+	        {{/sourceList}}
+	        </tbody>
+	    </table>
+	    <input type="hidden" name="idList" value="{{idlist}}">
+	    <input type="submit" name="command" value="Download Labels">
+	</form>
 {{> footer}}

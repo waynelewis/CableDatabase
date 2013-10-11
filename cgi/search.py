@@ -18,11 +18,13 @@ def printTableData(keys):
 				  installed = row[11])
 				  for row in rows]
 
+
 	# Setup the renderer to make the html list
 	renderer = pystache.Renderer()
 	data = renderer.render_path('tableData.mustache', {'footer' : time.asctime(time.localtime()),
 													   'title'  : 'Cable Data',
-												       'sourceList' : rdict})
+													   'sourceList' : rdict,
+													   'idlist' : ",".join(["{0}".format(row[0]) for row in rows])})
 	print data
 
 def printPullSheet(keys):

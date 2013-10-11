@@ -2,7 +2,8 @@
 
 from distutils.core import setup
 
-cgidir = '/var/www/CableDatabase'
+#cgidir = '/var/www/CableDatabase'
+cgidir = '/Users/wilkins/Sites/CableDatabase'
 
 setup(name='CableDatabase',
       version='0.1',
@@ -18,7 +19,8 @@ setup(name='CableDatabase',
                             'cgi/getAllTrayLoading.py',
                             'cgi/getFile.py',
                             'cgi/index.py',
-                            'cgi/getCableSpecs.py']),
+                            'cgi/getCableSpecs.py',
+                            'cgi/getData.py']),
                   (cgidir + '/css',['cgi/css/cdb.css']),
                   (cgidir + '/',  ['cgi/templates/getSourceList.mustache',
 	      					       'cgi/templates/searchForm.mustache',
