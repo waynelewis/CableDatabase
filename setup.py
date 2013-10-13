@@ -2,8 +2,8 @@
 
 from distutils.core import setup
 
-#cgidir = '/var/www/CableDatabase'
-cgidir = '/Users/wilkins/Sites/CableDatabase'
+cgidir = '/var/www/CableDatabase'
+#cgidir = '/Users/wilkins/Sites/CableDatabase'
 
 setup(name='CableDatabase',
       version='0.1',
