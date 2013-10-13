@@ -1,11 +1,12 @@
 {{> header}}
 <table class="gridtable" align="center">
 	<thead>
-        <th>Cable Label</th>
-		<th>Cable Type</th>
-		<th>Cable Use</th>
-		<th>Source Conn.</th>
-		<th>Destination Conn.</th>
+        <th width = "15%">Cable Label</th>
+		<th width = "15%">Cable Type</th>
+		<th width = "15%">Cable Use</th>
+		<th width = "15%">Cable Wiring</th>
+		<th width = "20%">Source Conn.</th>
+		<th width = "20%">Destination Conn.</th>
     </thead>
     <tbody>
     {{#sourceList}}
@@ -13,6 +14,7 @@
             <td>{{label}}</td>
             <td><a href="getCableSpecs.py?id={{type}}">{{type}}</a> ({{longType}})</td>
             <td>{{use}}</td>
+            <td><a href="getCableWiring.py?id={{wiring}}">{{wiring}}</a></td>
             <td>{{sourceconn}}</td>
             <td>{{destconn}}
         </tr>

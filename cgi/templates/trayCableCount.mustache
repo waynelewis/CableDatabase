@@ -1,0 +1,26 @@
+{{>header}}
+	<table class="gridtable" align="center">
+    	<thead>
+    		<tr>
+            	<th>Cable Tray Label</th>
+	            <th colspan="{{nCables}}">Cable ID</th>
+    		</tr>
+    		<tr>
+				<th>&nbsp;</th>
+				{{#cableList}}
+				<th width=5% height=100px><div class="rotate" height=150px><p>{{id}}</p><p>{{desc}}</p></div></th>
+				{{/cableList}}
+    		</tr>
+        </thead>
+        <tbody>
+        {{#data}}
+            <tr>
+                <td>{{label}}</td>
+                {{#count}}
+                	<td>{{val}}</td>
+                {{/count}}
+            </tr>
+        {{/data}}
+        </tbody>
+    </table>
+{{> footer}}

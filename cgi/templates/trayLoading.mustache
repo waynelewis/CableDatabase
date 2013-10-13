@@ -1,22 +1,33 @@
 {{>header}}
 	<table class="gridtable" align="center">
     	<thead>
-            <th>Cable Tray Label</th>
-			<th>Divider 'A'</th>
-			<th>Divider 'B'</th>
-			<th>Divider 'C'</th>
-			<th>Divider 'D'</th>
+    		<tr>
+            	<th>Cable Tray Label</th>
+	            <th colspan="{{nDiv}}">Tray Fill Ratio</th>
+	            <th colspan="{{nDiv}}">Number of Cables</th>
+    		</tr>
+    		<tr>
+				<th>&nbsp;</th>
+				{{#divList}}
+				<th>Div. '{{divN}}'</th>
+				{{/divList}}
+				{{#divList}}
+				<th>Div. '{{divN}}'</th>
+				{{/divList}}
+    		</tr>
         </thead>
         <tbody>
-        {{#loadingList}}
+        {{#data}}
             <tr>
                 <td>{{label}}</td>
-                <td width=15% style="background-color:{{Acolour}}">{{A}}</td>
-                <td width=15% style="background-color:{{Bcolour}}">{{B}}</td>
-                <td width=15% style="background-color:{{Ccolour}}">{{C}}</td>
-                <td width=15% style="background-color:{{Dcolour}}">{{D}}</td>
+                {{#loading}}
+                	<td width=5% {{fmt}}>{{val}}</td>
+                {{/loading}}
+                {{#nCables}}
+                	<td width=5% {{fmt}}>{{val}}</td>
+                {{/nCables}}
             </tr>
-        {{/loadingList}}
+        {{/data}}
         </tbody>
     </table>
 {{> footer}}
