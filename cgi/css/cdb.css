@@ -7,7 +7,7 @@ body{
 }
 
 .fullwidth {
-	width: 1100px;
+	width: 1400px;
 	text-align: center;
 	margin:0 auto;
 }
@@ -15,7 +15,7 @@ body{
 div.title {
 	font-weight: bold;
 	height:90px;
-	width:770px;
+	width:880px;
 	font-size: 32px;
 	display: inline-block;
 	line-height: 80px;
@@ -25,13 +25,13 @@ div.title {
 
 div.logo {
 	height:90px;
-	width:250px;
-	display: inline-block;
-	background: url('../images/nsls2logo.png');
+	width:510px;
 	background-size: contain;
 	background-repeat: no-repeat;
 	line-height: 80px;
 	background-color: #ffffff;
+	display: inline-block;
+    vertical-align: middle;
 }
 
 div.submitline {
@@ -62,8 +62,8 @@ table.smalltable {
 
 table.gridtable {
 	font-size:11px;
-	color:#333333;
-	width: 1020px;
+	color: #333333;
+	width: 1400px;
 	border-width: 2px;
 	border-color: #666666;
 	border-collapse: collapse;
@@ -74,16 +74,37 @@ table.gridtable th {
 	padding: 8px;
 	border-style: solid;
 	border-color: #666666;
-	background-color: #dedede;
+	background-color: #bbbbbb;
 }
 
-table.gridtable td {
+table.gridtable tr:nth-child(odd) td{
 	font-family: courier;
 	border-width: 2px;
 	padding: 8px;
 	border-style: solid;
 	border-color: #666666;
 	background-color: #ffffff;
+}
+
+table.gridtable tr:nth-child(even) td{
+	font-family: courier;
+	border-width: 2px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #666666;
+	background-color: #f0f0f0;
+}
+
+.warning td{
+	background-color: #ffe4b3;
+}
+
+.good td{
+	background-color: #000000;
+}
+
+.bad td{
+	background-color: #ff7d7d;
 }
 
 .mselect {
@@ -93,7 +114,7 @@ table.gridtable td {
 }
 
 .footer {
-	width: 1020px;
+	width: 1400px;
 	height: 100px;
 	font-size: 14px;
 	display: inline-block;
@@ -101,4 +122,12 @@ table.gridtable td {
 	text-align: left;
 	font-weight: bold;
 	background-color: #ffffff;
+}
+
+.rotate {
+     -moz-transform: rotate(-90.0deg);  /* FF3.5+ */
+       -o-transform: rotate(-90.0deg);  /* Opera 10.5 */
+  -webkit-transform: rotate(-90.0deg);  /* Saf3.1+, Chrome */
+             filter:  progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083);  /* IE6,IE7 */
+         -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)"; /* IE8 */
 }

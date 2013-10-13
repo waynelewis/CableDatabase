@@ -32,7 +32,7 @@ def main():
 	# Setup the renderer to make the html list
 	renderer = pystache.Renderer()
 	
-	footer = 'Printed on : ' + time.asctime(time.localtime())
+	footer = time.asctime(time.localtime())
 	title = 'Source Connection List for {0}'.format(src)
 	
 	data = renderer.render_path('getSourceList.mustache', 

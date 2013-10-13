@@ -10,41 +10,51 @@ def main():
 	
 	alldata = cdblib.getAllTrayLoadings()
 	
+	divToShow = ['A','B','C','D','E','F']
+	
+	divList = [dict(divN=div) for div in divToShow]
+	
 	rdict = []
 	for data in alldata:
 		nPercentLoading = data[2]
-		colour = dict()
-		percentLoading = dict()
-		for div in ['A','B','C','D']:
+		nCables = data[3]
+		
+		tClass = list()
+		pVal = list()
+		nVal = list()
+		
+		for div in divToShow:
+		
 			if not div in nPercentLoading:	
-				percentLoading[div] = "0.00%"
+				pVal.append("0.00%")
 				nPercentLoading[div] = 0.0
 			else:
-				percentLoading[div] = "{0:.1f}%".format(nPercentLoading[div] * 100)
+				pVal.append("{0:.1f}%".format(nPercentLoading[div] * 100))
 		
 			if nPercentLoading[div] > 0.5:
-				colour[div] = "red"
+				tClass.append('style=background-color:#ff7d7d')
 			elif (nPercentLoading[div] >= 0.4) and (nPercentLoading[div] <=0.5):
-				colour[div] = "#ffcc00"
+				tClass.append('style=background-color:#ffe4b3')
 			elif nPercentLoading[div] < 0.4:
-				colour[div] = "#33cc00"
+				tClass.append('')
+
+			if not div in nCables:
+				nVal.append("0")
+			else:
+				nVal.append("{0}".format(nCables[div]))
 
 		d = dict(label = data[0],
-				 A = percentLoading['A'],
-				 B = percentLoading['B'],
-				 C = percentLoading['C'],
-				 D = percentLoading['D'],
-				 Acolour = colour['A'],
-				 Bcolour = colour['B'],
-				 Ccolour = colour['C'],
-				 Dcolour = colour['D'])
+				 loading = [dict(val=a,fmt=b) for a,b in zip(pVal,tClass)],
+				 nCables = [dict(val=a,fmt=b) for a,b in zip(nVal,tClass)])
 		rdict.append(d)
 		
 	renderer = pystache.Renderer()
 	footer = time.asctime(time.localtime())
 	data = renderer.render_path('trayLoading.mustache', {'title' : 'Cable Tray Loading',
 											             'footer' : footer, 
-														 'loadingList' : rdict})	
+											             'nDiv' : len(divList),
+											             'divList' : divList,
+														 'data' : rdict})
 	print data
 
 
