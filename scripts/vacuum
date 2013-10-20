@@ -1,0 +1,85 @@
+#!/usr/bin/python
+import CableDatabase.library as cdblib
+import CableDatabase.tools as cdbtools
+
+def main():
+	
+	sys = 'XF23ID1-VA'
+	ports1  = dict(zip(['{{VGC:{0:02}}}'.format(i) for i in range(1,7)],
+				 ['tsrv1-P{0}'.format(i) for i in range(1,7)]))
+	ports2  = dict(zip(['{{IPC:{0:02}}}'.format(i) for i in range(1,7)],
+				 ['tsrv1-P{0}'.format(i + 8) for i in range(1,7)]))
+	ports3  = dict(zip(['{{VGC:{0:02}}}'.format(i) for i in range(7,13)],
+				 ['tsrv2-P{0}'.format(i - 6) for i in range(7,13)]))
+	ports4  = dict(zip(['{{IPC:{0:02}}}'.format(i) for i in range(7,13)],
+				 ['tsrv2-P{0}'.format(i + 8 - 6) for i in range(7,13)]))
+	ports5  = dict(zip(['{{RGA:{0}}}'.format(i) for i in range(1,9)],
+				 ['rga{0}-P1'.format(i) for i in range(1,9)]))
+	ports = dict(ports1.items() + ports2.items() + ports3.items() + ports4.items() + ports5.items())
+	
+	# create substitution file for vacuum guage controllers
+	
+	mksvgc(sys,ports)
+	gammaipc(sys,ports)
+	asynports(sys, ports)
+	rga(sys,ports)
+	makeArchiver(sys)
+	
+def makeArchiver(sys):
+	
+	groups = list()
+	
+	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'Cold Cathode Gauge'))
+	groups += cdbtools.makeArchiverDict(sys, rows, 'CCG', ['P-I'])
+	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'Pirani Gauge'))
+	groups += cdbtools.makeArchiverDict(sys, rows, 'TCG', ['P-I'])
+	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'HV Power Supply'))
+	groups += cdbtools.makeArchiverDict(sys, rows, 'IP', ['P-I'])
+	
+	cdbtools.render('archiverEngine.mustache', 'engine.xml', {'groups' : groups})	
+	
+
+	
+def mksvgc(sys,ports):
+
+	ccgRows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'Cold Cathode Gauge'))
+	ccgGauges, ccgRelays = cdbtools.makeVacuumDictionary('mksvgc',sys,ccgRows,ports)
+	
+	piraniRows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'Pirani Gauge'))
+	piraniGauges, piraniRelays = cdbtools.makeVacuumDictionary('mksvgc',sys,piraniRows,ports)
+	
+	controllers = cdbtools.makeSimpleDictionary(sys, ccgRows + piraniRows, ports, unique=True, source = True)
+	
+	cdbtools.render('vgc.mustache', 'vgc.substitutions', {'ccg'         : ccgGauges,
+						                    			  'ccgRelays'   : ccgRelays,
+														  'pirg'        : piraniGauges,
+														  'pirgRelays'  : piraniRelays,
+														  'controllers' : controllers})	
+	
+def gammaipc(sys,ports):	
+	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'HV Power Supply'))
+	
+	ipc, ipcRelays = cdbtools.makeVacuumDictionary('gammaipc',sys,rows,ports)
+	controllers = cdbtools.makeSimpleDictionary(sys, rows, ports, unique=True, source = True)
+	
+	cdbtools.render('ipc.mustache', 'ipc.substitutions', {'controllers' : controllers,
+		                                    			  'ip'          : ipc,
+														  'setpoint'    : ipcRelays})
+	
+def asynports(sys,ports):
+	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = ['HV Power Supply', 
+																  'Cold Cathode Gauge', 
+																  'Pirani Gauge']))
+	asyn = cdbtools.makeSimpleDictionary(sys, rows, ports, source = 'True')
+	
+	cdbtools.render('asyn.mustache', 'asyn.substitutions', {'asyn' : asyn})
+	
+def rga(sys,ports):
+	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'RGA Signal'))
+	rga = cdbtools.makeSimpleDictionary(sys, rows, ports)
+	
+	cdbtools.render('rga.mustache', 'rga.substitutions', {'rga' : rga})	
+	
+if __name__ == "__main__":
+	main()
+	
