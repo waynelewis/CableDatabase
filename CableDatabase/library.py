@@ -166,7 +166,7 @@ def getCableCount(trayTag):
 	for cable in cableTypes:
 		cmd =  "SELECT id FROM CableDatabase"
 		cmd += " WHERE cableType='{0}'".format(cable[0])
-		cmd += " AND (cablePath REGEXP {0} OR destinationID = {2});".format(trayREGEXP.format(trayTag),trayTag)
+		cmd += " AND (cablePath REGEXP '{0}' OR destinationID = '{1}');".format(trayREGEXP.format(trayTag),trayTag)
 		rows = databaseSelect(cmd)
 		cablesDict[cable[0]] = [row[0] for row in rows]
 	
