@@ -7,15 +7,15 @@ from CableDatabase import library as cdblib
 import pystache
 
 def printTableData(keys):
-	rows = cdblib.getAllData(keys)
-	rdict = [dict(label = cdblib.makeCableLabel(row,'{A..B}'),
-				  type = row[4] + '(' + row[5] + ')',
-				  use = row[6],
-				  source = row[7],
-				  destination = row[8],
-				  path = row[9],
-				  drawing = row[10],
-				  installed = row[11])
+	rows = cdblib.doCableSearch(keys)
+	rdict = [dict(label = cdblib.makeCableLabel(row,'{A/B}'),
+				  type = row[7] + '(' + row[16] + ')',
+				  use = row[8],
+				  source = row[9],
+				  destination = row[10],
+				  path = row[12],
+				  drawing = row[11],
+				  installed = row[13])
 				  for row in rows]
 
 
@@ -28,13 +28,13 @@ def printTableData(keys):
 	print data
 
 def printPullSheet(keys):
-	rows = cdblib.getPullSheetData(keys)
+	rows = cdblib.doCableSearch(keys)
 	rdict = [dict(label = row[0] - 100000,
-				  type = row[4] + '(' + row[5] + ')',
-				  use = row[6],
-				  source = row[7],
-				  path = row[8],
-				  destination = row[9])
+				  type = row[7] + '(' + row[16] + ')',
+				  use = row[8],
+				  source = row[9],
+				  path = row[12],
+				  destination = row[10])
 				  for row in rows]
 
 	# Setup the renderer to make the html list

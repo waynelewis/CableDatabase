@@ -62,9 +62,9 @@ def doConnectionSearch(criteria):
 	
 	return databaseSelect(cmd)
 	
-def doCableSearch(returned, keys):
+def doCableSearch(keys):
 	"""Do search of cable database and return ids of results"""
-	cmd =  "SELECT a.id,a.branch,a.sourceID,a.destinationID,a.cableType,b.cableLongName,a.cableUse,{0}".format(",".join(returned))
+	cmd =  "SELECT a.*, b.cableLongName"
 	cmd += " FROM CableDatabase a, CableTypes b WHERE a.cableType = b.cableType "
 	
 	s = []
@@ -122,15 +122,15 @@ def getSourceConnectionList(source):
     cmd += ' FROM CableDatabase a, CableTypes b WHERE a.sourceID = "{0}" AND a.cableType = b.cableType'.format(source)
     return databaseSelect(cmd)
     
-def getPullSheetData(keys):
-	"""Get Pullsheet Data from search made up of keys"""
-	rows = doCableSearch(['a.sourceID, a.cablePath, a.destinationID'], keys)
-	return rows
-	
-def getAllData(keys):
-	"""Get all columns of use from the database"""
-	rows = doCableSearch(['a.sourceID, a.destinationID, a.cablePath, a.cableWiring, a.cableInstalled'], keys)
-	return rows
+#def getPullSheetData(keys):
+#	"""Get Pullsheet Data from search made up of keys"""
+#	rows = doCableSearch(['a.sourceID, a.cablePath, a.destinationID'], keys)
+#	return rows
+#	
+#def getAllData(keys):
+#	"""Get all columns of use from the database"""
+#	rows = doCableSearch(['a.sourceID, a.destinationID, a.cablePath, a.cableWiring, a.cableInstalled'], keys)
+#	return rows
 	
 def getData(ids):
 	"""Get all data based on list of ids"""
