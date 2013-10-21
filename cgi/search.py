@@ -9,12 +9,13 @@ import pystache
 def printTableData(keys):
 	rows = cdblib.doCableSearch(keys)
 	rdict = [dict(label = cdblib.makeCableLabel(row,'{A/B}'),
-				  type = row[7] + '(' + row[16] + ')',
+				  type = row[7],
+				  longtype = row[16],
 				  use = row[8],
 				  source = row[9],
 				  destination = row[10],
 				  path = row[12],
-				  drawing = row[11],
+				  wiring = row[11],
 				  installed = row[13])
 				  for row in rows]
 
@@ -30,7 +31,8 @@ def printTableData(keys):
 def printPullSheet(keys):
 	rows = cdblib.doCableSearch(keys)
 	rdict = [dict(label = row[0] - 100000,
-				  type = row[7] + '(' + row[16] + ')',
+				  type = row[7],
+				  longtype = row[16],
 				  use = row[8],
 				  source = row[9],
 				  path = row[12],

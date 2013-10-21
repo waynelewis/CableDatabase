@@ -16,12 +16,12 @@
 	        {{#sourceList}}
 	            <tr>
 	                <td>{{label}}</td>
-	                <td>{{type}}</td>
+	                <td><a href="getFile.py?id={{type}}&type=cableSpecs">{{type}}</a> ({{longType}})</td>
 	                <td>{{use}}</td>
 	                <td>{{source}}</td>
 	                <td>{{destination}}</td>
 	                <td>{{path}}</td>
-	                <td>{{drawing}}</td>
+	                <td><a href="getFile.py?id={{wiring}}&type=cableWiring">{{wiring}}</a></td>
 	                <td>{{installed}}</td>
 	            </tr>
 	        {{/sourceList}}
