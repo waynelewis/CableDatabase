@@ -13,7 +13,13 @@ def main():
 	
 	dataList = list()
 	for k in allData: # Over all tray segments
-		dataList.append(dict(label = k, count = [dict(val = len(allData[k][c[0]])) for c in allCables]))
+		count = list()
+		for c in allCables:
+			if c[0] in allData[k]:
+				count.append(dict(val = len(allData[k][c[0]])))
+			else:
+				count.append(dict(val = 0))
+		dataList.append(dict(label = k, count = count))
 			
 	renderer = pystache.Renderer()
 	footer = time.asctime(time.localtime())

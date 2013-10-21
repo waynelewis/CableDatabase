@@ -22,11 +22,12 @@ def main():
 
 	# transpose the data
 	rdict = [dict(label = cdblib.makeCableLabel(row, "A"),
-				  type = row[4],
-				  longType = row[5],
-				  use = row[6],
-				  sourceconn = row[7],
-				  destconn = row[8])
+				  type = row[7],
+				  longType = row[16],
+				  use = row[8],
+				  sourceconn = row[3],
+				  destconn = row[5],
+				  wiring = row[11])
 			 for row in rows]
 
 	# Setup the renderer to make the html list

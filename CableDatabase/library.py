@@ -11,10 +11,10 @@ dbPassword = ''
 dbName = 'NSLS2CableDatabase'
 dbPort = 3306
 
-trayREGEXP = "'[[:<:]]{0}[A-Z][[:>:]]|[[:<:]]{0}[[:>:]]'"
+trayREGEXP = "[[:<:]]{0}[A-Z][[:>:]]|[[:<:]]{0}[[:>:]]"
 
-dbColumns = ['branch', 'vacuumSection', 'nemonic', 'sourceID', 'destinationId', 'cableType', 'cableUse']
-columnNames =  ['Branch', 'Vacuum Section', 'Nemonic', 'Source ID', 'Destination ID', 'Cable Type', 'Cable Use']
+dbColumns = ['branch', 'vacuumSection', 'sourceID', 'destinationId', 'cableType', 'cableUse']
+columnNames =  ['Branch', 'Vacuum Section', 'Source ID', 'Destination ID', 'Cable Type', 'Cable Use']
 
 ### End database parameters ###
 
@@ -27,7 +27,7 @@ def databaseConnect():
         return None
     return con
     
-def databaseSelect(cmd):
+def databaseSelect(cmd, toPass = None):
 	"""Make mySQL select and return rows.
 	
 	Open DB connection and make select.
@@ -36,11 +36,31 @@ def databaseSelect(cmd):
 	"""
 	db = databaseConnect()
 	cur = db.cursor()
-	cur.execute(cmd)
+	if toPass is None:
+		cur.execute(cmd)
+	else:
+		cur.execute(cmd, toPass)
 	rows = cur.fetchall()
 	cur.close()
 	db.close()
 	return rows
+	
+def doConnectionSearch(criteria):
+	"""Search database for specific cable use and return connection details"""
+	cmd =  "SELECT id,sourceConnection, destinationConnection"
+	cmd += " FROM CableDatabase"
+	cmd += " WHERE "
+	
+	whereList = list()
+	for key,val in criteria.iteritems():
+		if type(val) == type(list()):
+			whereList.append('{0} IN ({1})'.format(key,",".join([("'" + v + "'") for v in val])))
+		else:
+			whereList.append("{0} = '{1}'".format(key,val))
+	
+	cmd += " AND ".join(whereList)
+	
+	return databaseSelect(cmd)
 	
 def doCableSearch(returned, keys):
 	"""Do search of cable database and return ids of results"""
@@ -71,27 +91,23 @@ def makeCableLabel(data, end):
 
     0 : ID
     1 : Branch
-    2 : Source ID
-    3 : Destination ID
+    9 : Source ID
+    10 : Destination ID
 
     end is the string to terminate, such as 'A'
     """
-    return "23ID:%d-%s-%s-%s-%s" % (data[1], data[0], data[2], data[3], end)
+    return "23ID:%d-%s-%s-%s-%s" % (data[1], data[0], data[9], data[10], end)
 
 def getCableSpecSheet(id):
-	"""Return file of cable spec sheet
-	
-	"""
+	"""Return file of cable spec sheet"""
 	cmd = "SELECT a.mimetype,a.data from Files a, CableTypes b WHERE b.cableType = '{0}' AND a.id = b.specFile".format(id)
 	rows = databaseSelect(cmd)
 	if rows[0] is None:
 		return None, None	
 	return rows[0]
 	
-def getCableWiringDiagram(id):
-	"""Return file of cable spec sheet
-	
-	"""
+def getCableWiring(id):
+	"""Return file of cable spec sheet"""
 	cmd = "SELECT a.mimetype,a.data from Files a, CableWiring b WHERE b.cableWiring = '{0}' AND a.id = b.specFile".format(id)
 	rows = databaseSelect(cmd)
 	if rows[0] is None:
@@ -101,7 +117,8 @@ def getCableWiringDiagram(id):
 def getSourceConnectionList(source):
     """Get source connection list from database and return rows"""
     
-    cmd =  "SELECT a.id,a.branch,a.sourceID,a.destinationID,a.cableType,b.cableLongName,a.cableUse,a.sourceConnection,a.destinationConnection"
+    cmd =  "SELECT a.*,b.cableLongName"
+    #cmd += "a.cableUse,a.sourceConnection,a.destinationConnection,a.cableWiring"
     cmd += ' FROM CableDatabase a, CableTypes b WHERE a.sourceID = "{0}" AND a.cableType = b.cableType'.format(source)
     return databaseSelect(cmd)
     
@@ -112,13 +129,12 @@ def getPullSheetData(keys):
 	
 def getAllData(keys):
 	"""Get all columns of use from the database"""
-	rows = doCableSearch(['a.sourceID, a.destinationID, a.cablePath, a.cableDwgNo, a.cableInstalled'], keys)
+	rows = doCableSearch(['a.sourceID, a.destinationID, a.cablePath, a.cableWiring, a.cableInstalled'], keys)
 	return rows
 	
 def getData(ids):
 	"""Get all data based on list of ids"""
-	
-	cmd = "SELECT id,branch,sourceID,destinationID FROM CableDatabase WHERE id in ({0})".format(",".join(ids))
+	cmd = "SELECT * FROM CableDatabase WHERE id in ({0})".format(",".join(ids))
 	return databaseSelect(cmd)
 
 def getAllAndSort(table, field):
@@ -150,7 +166,7 @@ def getCableCount(trayTag):
 	for cable in cableTypes:
 		cmd =  "SELECT id FROM CableDatabase"
 		cmd += " WHERE cableType='{0}'".format(cable[0])
-		cmd += " AND (cablePath REGEXP {0} OR destinationID = {0});".format(trayTag)
+		cmd += " AND (cablePath REGEXP {0} OR destinationID = {2});".format(trayREGEXP.format(trayTag),trayTag)
 		rows = databaseSelect(cmd)
 		cablesDict[cable[0]] = [row[0] for row in rows]
 	
@@ -182,9 +198,10 @@ def calculateTrayLoading(trayTag):
 	rexp = trayREGEXP.format(trayTag)
 		 	
 	cmd =  "SELECT a.id, b.cableDiameter, b.defaultDivider, a.cablePath, a.sourceID, a.destinationID"
-	cmd += " FROM CableDatabase a, CableTypes b where a.cableType = b.cableType"
-	cmd += " AND (a.cablePath REGEXP {0} OR a.destinationID = {0});".format(trayTag)
-	
+	cmd += " FROM CableDatabase a, CableTypes b"
+	cmd += " WHERE a.cableType = b.cableType" 
+	cmd += " AND (a.destinationID = '{0}' OR a.cablePath REGEXP '{1}')".format(trayTag, rexp)
+		
 	rows = databaseSelect(cmd)
 		
 	if rows is None:
@@ -214,7 +231,7 @@ def calculateTrayLoading(trayTag):
 		return None
 	
 	cmd =  "SELECT " + ",".join(["div{0}Size".format(a) for a in loading.keys()])
-	cmd += " FROM CableTrays WHERE id = {0}".format(trayTag)
+	cmd += " FROM CableTrays WHERE id = '{0}'".format(trayTag)
 
 	trow = databaseSelect(cmd)
 	trow = trow[0] # Use first row, there is only one!

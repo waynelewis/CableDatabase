@@ -1,5 +1,6 @@
 {{> header}}
 	<form method="post" action="getData.py">
+		<input type="hidden" name="idList" value="{{idlist}}">	
 		<table class="gridtable" align="center">
 	    	<thead>
 	            <th>Cable Number</th>
@@ -26,7 +27,13 @@
 	        {{/sourceList}}
 	        </tbody>
 	    </table>
-	    <input type="hidden" name="idList" value="{{idlist}}">
-	    <input type="submit" name="command" value="Download Labels">
+	    <table class="smalltable" align=center>
+			<tbody>
+				<tr>
+					<th align="center"><input type="submit" name="command" value="Download Labels"></th>
+					<th align="center"><input type="submit" name="command" value="Download Table Data"></th>
+				</tr>
+			</tbody>
+		</table>
 	</form>
 {{> footer}}

@@ -1,0 +1,162 @@
+#!/usr/bin/python
+#
+# cdb_make_files (c) Stuart B. Wilkins 2013
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Part of the "CableDatabase" package
+#
+
+import optparse
+import sys
+import CableDatabase.library as cdblib
+import CableDatabase.tools as cdbtools
+
+def main():
+	"""Main routine to be launched"""
+	
+	# Start the option parser.
+	p = optparse.OptionParser()
+	p.add_option('-s', '--sys', default = "XF:23ID1-VA", type="string",
+			     help = "System part of PV name")
+			     
+	p.add_option('--vgc', default = False, action="store_true",
+	             help = "Process vacuum gauge controllers substitution file")
+	p.add_option('--vgc-file', default = "vgc.substitution",
+				 help = "Substitution file name [default: %default]")
+				 
+	p.add_option('--ipc', default = False, action="store_true",
+				 help = "Process ion pump controllers substitution file")
+	p.add_option('--ipc-file', default = "ipc.substitution",
+				 help = "Substitution file name [default: %default]")
+				 
+	p.add_option('--asyn', default = False, action="store_true",
+	             help = "Process asyn substitution file")
+	p.add_option('--asyn-file', default = "asyn.substitution",
+				 help = "Substitution file name [default: %default]")
+	
+	p.add_option('--rga', default = False, action="store_true",
+	             help = "Process RGA substitution file")
+	p.add_option('--rga-file', default = "rga.substitution",
+				 help = "Substitution file name [default: %default]")
+				 
+	p.add_option('--archiver', default = False, action="store_true",
+			     help = "Process channel archiver XML file")
+	p.add_option('--archiver-file', default = 'engine.xml',
+				 help = "Substitution file name [default: %default]")
+	
+	# Parse options
+	options, arguments = p.parse_args()
+	
+	# If run with no opions, show help
+	if len(sys.argv) == 1:
+		p.print_help()
+		sys.exit()
+    
+    # Set our options from the parsed arguments
+    	
+	ports1  = dict(zip(['{{VGC:{0:02}}}'.format(i) for i in range(1,7)],
+				 ['tsrv1-P{0}'.format(i) for i in range(1,7)]))
+	ports2  = dict(zip(['{{IPC:{0:02}}}'.format(i) for i in range(1,7)],
+				 ['tsrv1-P{0}'.format(i + 8) for i in range(1,7)]))
+	ports3  = dict(zip(['{{VGC:{0:02}}}'.format(i) for i in range(7,13)],
+				 ['tsrv2-P{0}'.format(i - 6) for i in range(7,13)]))
+	ports4  = dict(zip(['{{IPC:{0:02}}}'.format(i) for i in range(7,13)],
+				 ['tsrv2-P{0}'.format(i + 8 - 6) for i in range(7,13)]))
+	ports5  = dict(zip(['{{RGA:{0}}}'.format(i) for i in range(1,9)],
+				 ['rga{0}-P1'.format(i) for i in range(1,9)]))
+	ports = dict(ports1.items() + ports2.items() + ports3.items() + ports4.items() + ports5.items())
+	
+	# create substitution file for vacuum guage controllers
+	
+	if options.vgc:
+		print "Writing VGC substitution file               : {0}".format(options.vgc_file)
+		mksvgc(options.sys,ports, options.vgc_file)
+		
+	if options.ipc:
+		print "Writing IPC substitution file               : {0}".format(options.ipc_file)
+		gammaipc(options.sys,ports, options.ipc_file)
+	
+	if options.asyn:
+		print "Writing ASYN substitution file              : {0}".format(options.asyn_file)
+		asynports(options.sys, ports, options.asyn_file)
+	
+	if options.rga:
+		print "Writing RGA substitution file               : {0}".format(options.rga_file)
+		rga(options.sys,ports, options.rga_file)
+	
+	if options.archiver:
+		print "Writing channel archiver substitution file  : {0}".format(options.archiver_file)
+		makeArchiver(options.sys, options.archiver_file)
+	
+	print ""
+	
+def makeArchiver(sys, filename):
+	
+	groups = list()
+	
+	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'Cold Cathode Gauge'))
+	groups += cdbtools.makeArchiverDict(sys, rows, 'CCG', ['P-I'])
+	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'Pirani Gauge'))
+	groups += cdbtools.makeArchiverDict(sys, rows, 'TCG', ['P-I'])
+	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'HV Power Supply'))
+	groups += cdbtools.makeArchiverDict(sys, rows, 'IP', ['P-I'])
+	
+	cdbtools.render('archiverEngine.mustache', filename, {'groups' : groups})	
+	
+
+	
+def mksvgc(sys,ports, filename):
+
+	ccgRows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'Cold Cathode Gauge'))
+	ccgGauges, ccgRelays = cdbtools.makeVacuumDictionary('mksvgc',sys,ccgRows,ports)
+	
+	piraniRows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'Pirani Gauge'))
+	piraniGauges, piraniRelays = cdbtools.makeVacuumDictionary('mksvgc',sys,piraniRows,ports)
+	
+	controllers = cdbtools.makeSimpleDictionary(sys, ccgRows + piraniRows, ports, unique=True, source = True)
+	
+	cdbtools.render('vgc.mustache', filename, {'ccg'         : ccgGauges,
+			                    			   'ccgRelays'   : ccgRelays,
+											   'pirg'        : piraniGauges,
+											   'pirgRelays'  : piraniRelays,
+											   'controllers' : controllers})	
+	
+def gammaipc(sys,ports,filename):	
+	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'HV Power Supply'))
+	
+	ipc, ipcRelays = cdbtools.makeVacuumDictionary('gammaipc',sys,rows,ports)
+	controllers = cdbtools.makeSimpleDictionary(sys, rows, ports, unique=True, source = True)
+	
+	cdbtools.render('ipc.mustache', filename, {'controllers' : controllers,
+		                                       'ip'          : ipc,
+											   'setpoint'    : ipcRelays})
+	
+def asynports(sys,ports,filename):
+	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = ['HV Power Supply', 
+																  'Cold Cathode Gauge', 
+																  'Pirani Gauge']))
+	asyn = cdbtools.makeSimpleDictionary(sys, rows, ports, source = 'True')
+	
+	cdbtools.render('asyn.mustache', filename, {'asyn' : asyn})
+	
+def rga(sys,ports,filename):
+	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'RGA Signal'))
+	rga = cdbtools.makeSimpleDictionary(sys, rows, ports)
+	
+	cdbtools.render('rga.mustache', filename, {'rga' : rga})	
+	
+if __name__ == "__main__":
+	main()
+	
