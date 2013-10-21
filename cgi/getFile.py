@@ -9,13 +9,18 @@ from CableDatabase import library as cdblib
 
 
 def main():
-	
 	# Get the CGI information for the source
 	# Exit the script if that information is not good. 
 	form = cgi.FieldStorage()
 	id = form.getvalue('id')
-	if id is not None:
-		mimeType,data = cdblib.getCableSpecSheet(id)
+	idType = form.getvalue('type')
+	if id is not None and idType is not None:
+		mimeType = None
+		if idType == 'cableSpecs':
+			mimeType,data = cdblib.getCableSpecSheet(id)
+		elif idType == 'cableWiring':
+			mimeType,data = cdblib.getCableWiring(id)
+			
 		if mimeType is not None:
 			print "Content-type: {0}\n\n".format(mimeType);
 			print data

@@ -55,13 +55,7 @@ relayDict = {'mksvgc'    : mksRelays,
 def render(template, ofile, dictionary):
 	"""Render the dictionary from a template file and write output.
 	
-	Render using pystache the template based on the dictionary. The template
-	directory is generated from the location of this module. Write the output
-	to file. 
 	
-	template   : Filename of the template.
-	ofile      : Filename of output file.
-	dictionary : Python dictionary of parameters for template.
 	
 	"""
 	renderer = pystache.Renderer()
@@ -72,23 +66,7 @@ def render(template, ofile, dictionary):
 	f.close()
 	
 def makeArchiverDict(sys, rows, name, signals):
-	"""Make dictionary to add to archiver
-	
-	Make a python dictionary for use with the EPICS channel
-	archiver and pystache template. Multiple entries are added
-	by providing multiple signals as a list. 
-	
-	row[2] defines the device, sys defines the system. The dictionary
-	consists of a list of entries:
-	
-	{pv : PV + SIGNAL}
-	
-	sys 	  : String of system.
-	rows	  : Table of data.
-	name      : String of name for group.
-	signals   : List of signals to archive.
-	"""
-	
+	"""Make dictionary to add to archiver"""
 	pvs = list()
 	for row in rows:
 		if row[2]:
@@ -99,21 +77,7 @@ def makeArchiverDict(sys, rows, name, signals):
 	return [dict(name = name, channels = pvs)]
 
 def makeSimpleDictionary(sys,rows, ports, source = False, unique = False):
-	"""Make Dictionary from all devices in list
-	
-	Make a "simple" dictionary for use with a pystache templates.
-	A dictionary of the form:
-	
-	{ 
-	  'sys'  : sys,
-	  'dev'  : row[1] for source (before the delimiting '-')
-	           row[2] for destination.
-	  'port' : row[1] (before the delimiting '-')
-	}
-	  
-	If unique is true then each entry is unique and non-unique rows will be 
-	ignored. 
-	"""
+	"""Make Dictionary from all devices in list"""
 
 	devices = list()	
 	deviceList = list()
@@ -135,22 +99,7 @@ def makeSimpleDictionary(sys,rows, ports, source = False, unique = False):
 	return devices
 
 def makeVacuumDictionary(vtype, sys,rows,ports):
-	"""Make Dictionary for substitution file for vacuum devices
-	
-	vtype = dictionary type. ('mksvac' or 'gammaipc')
-	
-	Make a vacuum dictionary of the form:
-	
-	{
-		'sys'   : sys,
-		'dev'	: row[2],
-		'chan'	: Lookup of dictionary based on row[1] after delimiter.
-		'cntl'	: row[1] before delimiter (including {})
-		'port'	: Dictionay lookup of ports with key the same as cntl.
-	}
-	
-	
-	"""
+	"""Make Dictionary for substitution file"""
 	gauges = list()
 	relays = list()
 	for row in rows:
