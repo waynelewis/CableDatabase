@@ -10,7 +10,7 @@ def printTableData(keys):
 	rows = cdblib.doCableSearch(keys)
 	rdict = [dict(label = cdblib.makeCableLabel(row,'{A/B}'),
 				  type = row[7],
-				  longtype = row[16],
+				  longType = row[16],
 				  use = row[8],
 				  source = row[9],
 				  destination = row[10],
@@ -32,7 +32,7 @@ def printPullSheet(keys):
 	rows = cdblib.doCableSearch(keys)
 	rdict = [dict(label = row[0] - 100000,
 				  type = row[7],
-				  longtype = row[16],
+				  longType = row[16],
 				  use = row[8],
 				  source = row[9],
 				  path = row[12],
