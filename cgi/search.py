@@ -29,11 +29,10 @@ def printTableData(keys):
 	print data
 
 def printPullSheet(keys):
-	color = {0 : '#FFFFFF', 1: '#FF0000'}
+	color = {None : '#F62217', 0 : '#F62217', 1: '#000000'}
 	rows = cdblib.doCableSearch(keys)
 	rdict = [dict(label = row[0] - 100000,
-				  type = row[7],
-				  longType = row[16],
+				  type = '{0} ({1})'.format(row[7],row[16]),
 				  use = row[8],
 				  source = row[9],
 				  path = row[12],
