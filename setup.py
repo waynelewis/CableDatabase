@@ -3,16 +3,11 @@
 from distutils.core import setup
 import glob
 
-<<<<<<< HEAD
-cgidir = '/var/www/CableDatabase'
-#cgidir = '/Users/wilkins/Sites/CableDatabase'
-=======
 #cgidir = '/var/www/CableDatabase'
 cgidir = '/Users/wilkins/Sites/CableDatabase'
 cgifiles  = glob.glob('cgi/*.py') 
 cgifiles += glob.glob('cgi/css/*.css') 
 cgifiles += glob.glob('cgi/templates/*.mustache')
->>>>>>> 862aab227644ec5fe8c69636a6025f0ba2570447
 
 setup(name='CableDatabase',
       version       ='0.1',

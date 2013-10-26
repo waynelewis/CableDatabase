@@ -29,6 +29,7 @@ def printTableData(keys):
 	print data
 
 def printPullSheet(keys):
+	color = {0 : '#FFFFFF', 1: '#FF0000'}
 	rows = cdblib.doCableSearch(keys)
 	rdict = [dict(label = row[0] - 100000,
 				  type = row[7],
@@ -36,7 +37,8 @@ def printPullSheet(keys):
 				  use = row[8],
 				  source = row[9],
 				  path = row[12],
-				  destination = row[10])
+				  destination = row[10],
+				  color = color[row[13]])
 				  for row in rows]
 
 	# Setup the renderer to make the html list
