@@ -3,7 +3,7 @@ file $(EPICS_BASE)/db/mks937b_controller.db
  pattern
  { Sys	, Cntl	, 	PORT	, ADR	}
  {{#controllers}}
- { {{sys}}, {{dev}}, {{port}}, 253 }
+ { {{sys}}, "{{dev}}", {{port}}, 253 }
  {{/controllers}}
 }
 
