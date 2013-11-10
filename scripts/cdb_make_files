@@ -30,6 +30,11 @@ def main():
 	p = optparse.OptionParser()
 	p.add_option('-s', '--sys', default = "XF:23ID1-VA", type="string",
 			     help = "System part of PV name")
+			   
+	p.add_option('--search', default = "", type="string",
+			     help = "Search options for cable database")
+	p.add_option('--subsys', default = False, action="store_true",
+				 help = "Add branch to system name")
 			     
 	p.add_option('--vgc', default = False, action="store_true",
 	             help = "Process vacuum gauge controllers substitution file")
@@ -63,8 +68,17 @@ def main():
 	if len(sys.argv) == 1:
 		p.print_help()
 		sys.exit()
-    
-    # Set our options from the parsed arguments
+	
+	searchDict = {}
+	if options.search:
+		# Split string on ,
+		for sopt in options.search.split(','):
+			o = sopt.split('=')
+			# Split options in =
+			if len(o) == 2:
+				searchDict[o[0]] = o[1]
+			else:
+				print "ERROR : syntax error in " + o.join()
     	
 	ports1  = dict(zip(['{{VGC:{0:02}}}'.format(i) for i in range(1,7)],
 				 ['tsrv1-P{0}'.format(i) for i in range(1,7)]))
@@ -82,23 +96,23 @@ def main():
 	
 	if options.vgc:
 		print "Writing VGC substitution file               : {0}".format(options.vgc_file)
-		mksvgc(options.sys,ports, options.vgc_file)
+		mksvgc(options.sys, options.subsys, ports, searchDict, options.vgc_file)
 		
 	if options.ipc:
 		print "Writing IPC substitution file               : {0}".format(options.ipc_file)
-		gammaipc(options.sys,ports, options.ipc_file)
+		gammaipc(options.sys, options.subsys,ports, searchDict, options.ipc_file)
 	
 	if options.asyn:
 		print "Writing ASYN substitution file              : {0}".format(options.asyn_file)
-		asynports(options.sys, ports, options.asyn_file)
+		asynports(options.sys, options.subsys, ports, searchDict, options.asyn_file)
 	
 	if options.rga:
 		print "Writing RGA substitution file               : {0}".format(options.rga_file)
-		rga(options.sys,ports, options.rga_file)
+		rga(options.sys, options.subsys, ports, searchDict, options.rga_file)
 	
 	if options.archiver:
 		print "Writing channel archiver substitution file  : {0}".format(options.archiver_file)
-		makeArchiver(options.sys, options.archiver_file)
+		makeArchiver(options.sys, options.subsys, options.archiver_file)
 	
 	print ""
 	
@@ -117,15 +131,16 @@ def makeArchiver(sys, filename):
 	
 
 	
-def mksvgc(sys,ports, filename):
+def mksvgc(sys,subsys, ports, searchDict, filename):
 
-	ccgRows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'Cold Cathode Gauge'))
-	ccgGauges, ccgRelays = cdbtools.makeVacuumDictionary('mksvgc',sys,ccgRows,ports)
+	ccgRows = cdblib.doConnectionSearch(dict(cableUse = 'Cold Cathode Gauge', **searchDict))
+	ccgGauges, ccgRelays = cdbtools.makeVacuumDictionary('mksvgc',sys,ccgRows,ports, addSubsystem = subsys)
 	
-	piraniRows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'Pirani Gauge'))
-	piraniGauges, piraniRelays = cdbtools.makeVacuumDictionary('mksvgc',sys,piraniRows,ports)
+	piraniRows = cdblib.doConnectionSearch(dict(cableUse = 'Pirani Gauge', **searchDict))
+	piraniGauges, piraniRelays = cdbtools.makeVacuumDictionary('mksvgc',sys,piraniRows,ports, addSubsystem = subsys)
 	
-	controllers = cdbtools.makeSimpleDictionary(sys, ccgRows + piraniRows, ports, unique=True, source = True)
+	controllers = cdbtools.makeSimpleDictionary(sys, ccgRows + piraniRows, 
+											    ports, unique=True, source = True)
 	
 	cdbtools.render('vgc.mustache', filename, {'ccg'         : ccgGauges,
 			                    			   'ccgRelays'   : ccgRelays,
@@ -133,27 +148,28 @@ def mksvgc(sys,ports, filename):
 											   'pirgRelays'  : piraniRelays,
 											   'controllers' : controllers})	
 	
-def gammaipc(sys,ports,filename):	
-	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'HV Power Supply'))
+def gammaipc(sys,subsys, ports,searchDict, filename):	
+	rows = cdblib.doConnectionSearch(dict(cableUse = 'HV Power Supply', **searchDict))
 	
-	ipc, ipcRelays = cdbtools.makeVacuumDictionary('gammaipc',sys,rows,ports)
+	ipc, ipcRelays = cdbtools.makeVacuumDictionary('gammaipc',sys,rows,ports, addSubsystem = subsys)
 	controllers = cdbtools.makeSimpleDictionary(sys, rows, ports, unique=True, source = True)
 	
 	cdbtools.render('ipc.mustache', filename, {'controllers' : controllers,
 		                                       'ip'          : ipc,
 											   'setpoint'    : ipcRelays})
 	
-def asynports(sys,ports,filename):
-	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = ['HV Power Supply', 
-																  'Cold Cathode Gauge', 
-																  'Pirani Gauge']))
+def asynports(sys,subsys, ports, searchDict, filename):
+	rows = cdblib.doConnectionSearch(dict(cableUse = ['HV Power Supply', 
+													  'Cold Cathode Gauge', 
+													  'Pirani Gauge'],
+										  **searchDict))
 	asyn = cdbtools.makeSimpleDictionary(sys, rows, ports, source = 'True')
 	
 	cdbtools.render('asyn.mustache', filename, {'asyn' : asyn})
 	
-def rga(sys,ports,filename):
-	rows = cdblib.doConnectionSearch(dict(branch = 1, cableUse = 'RGA Signal'))
-	rga = cdbtools.makeSimpleDictionary(sys, rows, ports)
+def rga(sys,subsys, ports,searchDict, filename):
+	rows = cdblib.doConnectionSearch(dict(cableUse = 'RGA Signal', **searchDict))
+	rga = cdbtools.makeSimpleDictionary(sys, rows, ports, addSubsystem = subsys)
 	
 	cdbtools.render('rga.mustache', filename, {'rga' : rga})	
 	

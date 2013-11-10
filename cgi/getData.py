@@ -5,12 +5,21 @@ cgitb.enable()
 
 from CableDatabase import library as cdblib
 
-def doLabels(data):
+def doLabels(data, type):
 	print 'Content-Type: application/csv; name="labels.csv"'
 	print 'Content-Disposition: attachment; filename="labels.csv"'
 	print
-	for row in data:
-		print cdblib.makeCableLabel(row, "A") + "," + cdblib.makeCableLabel(row, "B")
+	if type == 'all':
+		for row in data:
+			print cdblib.makeCableLabel(row, "A") + "," + cdblib.makeCableLabel(row, "B")
+	elif type == 'A':
+		for row in data:
+			print cdblib.makeCableLabel(row, "A")
+	elif type == 'B':
+		for row in data:
+			print cdblib.makeCableLabel(row, "B")
+			 
+	
 	
 def doTableData(data):
 	print 'Content-Type: application/csv; name="data.csv"'
@@ -31,8 +40,12 @@ def main():
 	ids = ids.split(",")
 	data = cdblib.getData(ids)
 	
-	if cmd == "Download Labels":
-		doLabels(data)
+	if cmd == "Download Labels (all)":
+		doLabels(data, 'all')
+	elif cmd == "Download Labels (A)":
+		doLabels(data, 'A')
+	elif cmd == "Download Labels (B)":
+		doLabels(data, 'B')
 	elif cmd == "Download Table Data":
 		doTableData(data)
 	else:

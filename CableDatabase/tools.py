@@ -71,7 +71,7 @@ def render(template, ofile, dictionary):
 	f.write(data)
 	f.close()
 	
-def makeArchiverDict(sys, rows, name, signals):
+def makeArchiverDict(sys, rows, name, signals, addSubsystem = False):
 	"""Make dictionary to add to archiver
 	
 	Make a python dictionary for use with the EPICS channel
@@ -83,29 +83,34 @@ def makeArchiverDict(sys, rows, name, signals):
 	
 	{pv : PV + SIGNAL}
 	
-	sys 	  : String of system.
-	rows	  : Table of data.
-	name      : String of name for group.
-	signals   : List of signals to archive.
+	sys 	     : String of system.
+	rows	     : Table of data.
+	name         : String of name for group.
+	signals      : List of signals to archive.
+	addSubsystem : If True, add the -XX subsystem to the system. 
 	"""
 	
 	pvs = list()
 	for row in rows:
 		if row[2]:
 			for signal in signals:
-				pv = dict(pv=sys + '{' + row[2] + '}' + signal)
+				if addSubsystem:
+					subsys = ':{0:01d}'.format(row[3])
+				else:
+					subsys = ''
+				pv = dict(pv=sys + subsys + '{' + row[2] + '}' + signal)
 				pvs.append(pv)
 			
 	return [dict(name = name, channels = pvs)]
 
-def makeSimpleDictionary(sys,rows, ports, source = False, unique = False):
+def makeSimpleDictionary(sys,rows, ports, source = False, unique = False, addSubsystem = False):
 	"""Make Dictionary from all devices in list
 	
 	Make a "simple" dictionary for use with a pystache templates.
 	A dictionary of the form:
 	
 	{ 
-	  'sys'  : sys,
+	  'sys'  : sys, (will use row[3]) for subsystem
 	  'dev'  : row[1] for source (before the delimiting '-')
 	           row[2] for destination.
 	  'port' : row[1] (before the delimiting '-')
@@ -127,14 +132,18 @@ def makeSimpleDictionary(sys,rows, ports, source = False, unique = False):
 			d = '{' + d + '}'
 			if not (unique and (d in deviceList)):
 				dev = dict()
-				dev['sys']  = sys
+				if addSubsystem:
+					dev['port'] = ':{0:01d}'.format(row[3])
+				else:
+					dev['port'] = ''
+				dev['port'] = dev['port'] + ports['{' + row[1].split('-')[0] + '}']
+				dev['sys'] = sys
 				dev['dev']  = d
-				dev['port'] = ports['{' + row[1].split('-')[0] + '}']
 				devices.append(dev)
 				deviceList.append(d)
 	return devices
 
-def makeVacuumDictionary(vtype, sys,rows,ports):
+def makeVacuumDictionary(vtype, sys,rows,ports, addSubsystem = False):
 	"""Make Dictionary for substitution file for vacuum devices
 	
 	vtype = dictionary type. ('mksvac' or 'gammaipc')
@@ -142,7 +151,7 @@ def makeVacuumDictionary(vtype, sys,rows,ports):
 	Make a vacuum dictionary of the form:
 	
 	{
-		'sys'   : sys,
+		'sys'   : sys, (will use row[3]) for subsystem
 		'dev'	: row[2],
 		'chan'	: Lookup of dictionary based on row[1] after delimiter.
 		'cntl'	: row[1] before delimiter (including {})
@@ -159,8 +168,13 @@ def makeVacuumDictionary(vtype, sys,rows,ports):
 		
 		if (row[1] is not '') and (row[2] is not ''):
 			gauge = dict()
+			
+			if addSubsystem:
+				gauge['dev'] = ':{0:01d}'.format(row[3])
+			else:
+				gauge['dev'] = ''
 			gauge['sys'] = sys
-			gauge['dev'] = '{' + row[2] + '}'
+			gauge['dev'] = gauge['dev'] + '{' + row[2] + '}'
 			gauge['chan'] = chanDict[vtype][row[1].split('-')[1]]
 			gauge['cntl'] = '{' + row[1].split('-')[0] + '}'
 			gauge['port'] = ports[gauge['cntl']]

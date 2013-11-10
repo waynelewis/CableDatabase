@@ -47,7 +47,7 @@ def databaseSelect(cmd, toPass = None):
 	
 def doConnectionSearch(criteria):
 	"""Search database for specific cable use and return connection details"""
-	cmd =  "SELECT id,sourceConnection, destinationConnection"
+	cmd =  "SELECT id,sourceConnection, destinationConnection, branch"
 	cmd += " FROM CableDatabase"
 	cmd += " WHERE "
 	
