@@ -38,22 +38,22 @@ def main():
 			     
 	p.add_option('--vgc', default = False, action="store_true",
 	             help = "Process vacuum gauge controllers substitution file")
-	p.add_option('--vgc-file', default = "vgc.substitution",
+	p.add_option('--vgc-file', default = "vgc.substitutions",
 				 help = "Substitution file name [default: %default]")
 				 
 	p.add_option('--ipc', default = False, action="store_true",
 				 help = "Process ion pump controllers substitution file")
-	p.add_option('--ipc-file', default = "ipc.substitution",
+	p.add_option('--ipc-file', default = "ipc.substitutions",
 				 help = "Substitution file name [default: %default]")
 				 
 	p.add_option('--asyn', default = False, action="store_true",
 	             help = "Process asyn substitution file")
-	p.add_option('--asyn-file', default = "asyn.substitution",
+	p.add_option('--asyn-file', default = "asyn.substitutions",
 				 help = "Substitution file name [default: %default]")
 	
 	p.add_option('--rga', default = False, action="store_true",
 	             help = "Process RGA substitution file")
-	p.add_option('--rga-file', default = "rga.substitution",
+	p.add_option('--rga-file', default = "rga.substitutions",
 				 help = "Substitution file name [default: %default]")
 				 
 	p.add_option('--archiver', default = False, action="store_true",
@@ -163,7 +163,7 @@ def asynports(sys,subsys, ports, searchDict, filename):
 													  'Cold Cathode Gauge', 
 													  'Pirani Gauge'],
 										  **searchDict))
-	asyn = cdbtools.makeSimpleDictionary(sys, rows, ports, source = 'True')
+	asyn = cdbtools.makeSimpleDictionary(sys, rows, ports, source = True, unique = True)
 	
 	cdbtools.render('asyn.mustache', filename, {'asyn' : asyn})
 	
