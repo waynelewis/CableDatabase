@@ -28,11 +28,15 @@ def main():
 	
 	# Start the option parser.
 	p = optparse.OptionParser()
+	p.add_option('-v', '--verbose', default = False, action="store_true",
+				 help = "Turn on verbose output [default: %default]")
+	
 	p.add_option('-s', '--sys', default = "XF:23ID1-VA", type="string",
 			     help = "System part of PV name")
 			   
 	p.add_option('--search', default = "", type="string",
 			     help = "Search options for cable database")
+			     
 	p.add_option('--subsys', default = False, action="store_true",
 				 help = "Add branch to system name")
 			     
@@ -75,8 +79,10 @@ def main():
 	
 	# Set hostname
 	
-	cdblib.dbHost = options.host
-	
+	if options.verbose:
+		cdblib.dbHost = options.host
+		print "Connecting using host                       : {0} as \"{1}\"".format(cdblib.dbHost, cdblib.dbUser)
+		
 	# Make the search dictionary from command line arguments
 	
 	searchDict = {}
@@ -91,6 +97,9 @@ def main():
 			else:
 				print "ERROR : syntax error in " + ','.join(o) + '\n'
 				sys.exit()
+	if options.verbose:
+		for a,b, in searchDict.items():
+			print "Using search                                : {0} = {1}".format(a,b)
     	
 	ports1  = dict(zip(['{{VGC:{0:02}}}'.format(i) for i in range(1,7)],
 				 ['tsrv1-P{0}'.format(i) for i in range(1,7)]))
@@ -107,26 +116,33 @@ def main():
 	# create substitution file for vacuum guage controllers
 	
 	if options.vgc:
-		print "Writing VGC substitution file               : {0}".format(options.vgc_file)
+		if options.verbose:
+			print "Writing VGC substitution file               : {0}".format(options.vgc_file)
 		mksvgc(options.sys, options.subsys, ports, searchDict, options.vgc_file)
 		
 	if options.ipc:
-		print "Writing IPC substitution file               : {0}".format(options.ipc_file)
+		if options.verbose:
+			print "Writing IPC substitution file               : {0}".format(options.ipc_file)
 		gammaipc(options.sys, options.subsys,ports, searchDict, options.ipc_file)
 	
 	if options.asyn:
-		print "Writing ASYN substitution file              : {0}".format(options.asyn_file)
+		if options.verbose:
+			print "Writing ASYN substitution file              : {0}".format(options.asyn_file)
 		asynports(options.sys, options.subsys, ports, searchDict, options.asyn_file)
 	
 	if options.rga:
-		print "Writing RGA substitution file               : {0}".format(options.rga_file)
+		if options.verbose:
+			print "Writing RGA substitution file               : {0}".format(options.rga_file)
 		rga(options.sys, options.subsys, ports, searchDict, options.rga_file)
 	
 	if options.archiver:
-		print "Writing channel archiver substitution file  : {0}".format(options.archiver_file)
+		if options.verbose:
+			print "Writing channel archiver substitution file  : {0}".format(options.archiver_file)
 		makeArchiver(options.sys, options.subsys, options.archiver_file)
 	
-	print ""
+	if options.verbose:
+		print "Done."
+		print ""
 	
 def makeArchiver(sys, filename):
 	
