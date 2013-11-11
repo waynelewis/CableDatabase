@@ -23,6 +23,12 @@ import sys
 import CableDatabase.library as cdblib
 import CableDatabase.tools as cdbtools
 
+# This is a very ugly hack... I am not happy 
+
+cdblib.dbHost = "xf23ida-ioc1"
+cdblib.dbUser = "cdbuser"
+cdblib.dbPassword = "cdbuser"
+
 def main():
 	"""Main routine to be launched"""
 	
