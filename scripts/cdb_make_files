@@ -23,12 +23,6 @@ import sys
 import CableDatabase.library as cdblib
 import CableDatabase.tools as cdbtools
 
-# This is a very ugly hack... I am not happy 
-
-cdblib.dbHost = "xf23ida-ioc1"
-cdblib.dbUser = "cdbuser"
-cdblib.dbPassword = "cdbuser"
-
 def main():
 	"""Main routine to be launched"""
 	
@@ -66,6 +60,10 @@ def main():
 			     help = "Process channel archiver XML file")
 	p.add_option('--archiver-file', default = 'engine.xml',
 				 help = "Substitution file name [default: %default]")
+				 
+	p.add_option('--host', default = 'localhost',
+				 help = "Host of mysql database [default: %default]")
+	
 	
 	# Parse options
 	options, arguments = p.parse_args()
@@ -75,6 +73,12 @@ def main():
 		p.print_help()
 		sys.exit()
 	
+	# Set hostname
+	
+	cdblib.dbHost = options.host
+	
+	# Make the search dictionary from command line arguments
+	
 	searchDict = {}
 	if options.search:
 		# Split string on ,
@@ -82,9 +86,11 @@ def main():
 			o = sopt.split('=')
 			# Split options in =
 			if len(o) == 2:
-				searchDict[o[0]] = o[1]
+				# Use the '|' as an or separator
+				searchDict[o[0]] = o[1].split('|')
 			else:
-				print "ERROR : syntax error in " + o.join()
+				print "ERROR : syntax error in " + ','.join(o) + '\n'
+				sys.exit()
     	
 	ports1  = dict(zip(['{{VGC:{0:02}}}'.format(i) for i in range(1,7)],
 				 ['tsrv1-P{0}'.format(i) for i in range(1,7)]))
