@@ -6,8 +6,8 @@ import math
 ### Here are the database parameters ###
 
 dbHost = 'localhost'
-dbUser = 'root'
-dbPassword = ''
+dbUser = 'cdbuser'
+dbPassword = 'cdbuser'
 dbName = 'NSLS2CableDatabase'
 dbPort = 3306
 
