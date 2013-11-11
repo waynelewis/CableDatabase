@@ -174,7 +174,7 @@ def asynports(sys,subsys, ports, searchDict, filename):
 	cdbtools.render('asyn.mustache', filename, {'asyn' : asyn})
 	
 def rga(sys,subsys, ports,searchDict, filename):
-	rows = cdblib.doConnectionSearch(dict(cableUse = 'RGA Signal', **searchDict))
+	rows = cdblib.doConnectionSearch(dict(cableUse = 'RGA SIGNAL', **searchDict))
 	rga = cdbtools.makeSimpleDictionary(sys, rows, ports, addSubsystem = subsys)
 	
 	cdbtools.render('rga.mustache', filename, {'rga' : rga})	
