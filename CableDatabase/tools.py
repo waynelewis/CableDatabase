@@ -133,12 +133,12 @@ def makeSimpleDictionary(sys,rows, ports, source = False, unique = False, addSub
 			if not (unique and (d in deviceList)):
 				dev = dict()
 				if addSubsystem:
-					dev['port'] = ':{0:01d}'.format(row[3])
+					dev['dev'] = ':{0:01d}'.format(row[3])
 				else:
-					dev['port'] = ''
-				dev['port'] = dev['port'] + ports['{' + row[1].split('-')[0] + '}']
+					dev['dev'] = ''
+				dev['port'] = ports['{' + row[1].split('-')[0] + '}']
 				dev['sys'] = sys
-				dev['dev']  = d
+				dev['dev']  = dev['dev'] + d
 				devices.append(dev)
 				deviceList.append(d)
 	return devices
