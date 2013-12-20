@@ -6,8 +6,8 @@ import math
 ### Here are the database parameters ###
 
 dbHost = 'localhost'
-dbUsers = 'cdb'
-dbPassword = 'cdb2810'
+dbUser = 'cdbuser'
+dbPassword = 'cdbuser'
 dbName = 'NSLS2CableDatabase'
 dbPort = 3306
 
@@ -21,7 +21,7 @@ columnNames =  ['Branch', 'Vacuum Section', 'Source ID', 'Destination ID', 'Cabl
 def databaseConnect():
     """Connect to SQL database and return connection object"""
     try:
-        con = mdb.connect(dbHost, dbUsers,dbPassword,dbName, dbPort); 
+        con = mdb.connect(dbHost, dbUser,dbPassword,dbName, dbPort); 
     except mdb.Error, e:
         print "Error %d: %s" % (e.args[0],e.args[1])
         return None
@@ -47,7 +47,7 @@ def databaseSelect(cmd, toPass = None):
 	
 def doConnectionSearch(criteria):
 	"""Search database for specific cable use and return connection details"""
-	cmd =  "SELECT id,sourceConnection, destinationConnection"
+	cmd =  "SELECT id,sourceConnection, destinationConnection, branch"
 	cmd += " FROM CableDatabase"
 	cmd += " WHERE "
 	
