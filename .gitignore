@@ -1,2 +1,3 @@
-build/*
 *.substitutions
+*.swp
+build/
