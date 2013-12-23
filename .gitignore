@@ -1,3 +1,4 @@
 *.substitutions
 *.swp
 build/
+*.pyc
