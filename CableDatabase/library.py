@@ -96,7 +96,7 @@ def makeCableLabel(data, end):
 
     end is the string to terminate, such as 'A'
     """
-    return "23ID:%d-%s-%s-%s-%s" % (data[1], data[0], data[9], data[10], end)
+    return "%s:%d-%s-%s-%s-%s" % (getBeamlineID(), data[1], data[0], data[9], data[10], end)
 
 def getCableSpecSheet(id):
 	"""Return file of cable spec sheet"""
@@ -122,6 +122,12 @@ def getSourceConnectionList(source):
     cmd += ' FROM CableDatabase a, CableTypes b WHERE a.sourceID = "{0}" AND a.cableType = b.cableType'.format(source)
     return databaseSelect(cmd)
     
+def getBeamlineID():
+    cmd = "SELECT beamline from Metadata"
+    return databaseSelect(cmd)[0][0]
+  
+
+
 #def getPullSheetData(keys):
 #	"""Get Pullsheet Data from search made up of keys"""
 #	rows = doCableSearch(['a.sourceID, a.cablePath, a.destinationID'], keys)
